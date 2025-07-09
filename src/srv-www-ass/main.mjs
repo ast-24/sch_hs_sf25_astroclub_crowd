@@ -29,6 +29,8 @@ class App {
         };
 
         this.setupRoutes();
+
+        this.router.handleRoute(); // 初期ルート処理
     }
 
     /**

@@ -13,9 +13,6 @@ export class Router {
 
         // popstateイベントでブラウザの戻る/進むボタンに対応
         window.addEventListener('popstate', (e) => this.handleRoute());
-
-        // 初期ルート処理
-        this.handleRoute();
     }
 
     /**
@@ -39,8 +36,6 @@ export class Router {
             return;
         }
 
-        console.log(`Handling route for path: ${path}`);
-
         // パスパラメータを含むルートのマッチング
         const matchedRoute = this.findMatchingRoute(path);
 
@@ -59,14 +54,11 @@ export class Router {
      */
     findMatchingRoute(path) {
         for (const [routePath, handler] of Object.entries(this.routes)) {
-            console.log(`Checking route: ${routePath} against path: ${path}`);
             const match = this.matchPath(routePath, path);
             if (match) {
-                console.log(`Route matched: ${routePath}`);
                 return { handler, params: match.params };
             }
         }
-        console.log(`No matching route found for path: ${path}`);
         return null;
     }
 
