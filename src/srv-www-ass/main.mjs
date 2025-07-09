@@ -1,6 +1,5 @@
 import { Router } from './cmn/router.mjs';
 import { CrowdAPI } from './cmn/api.mjs';
-import { RootPage } from './pages/root.mjs';
 
 import { Pages } from './pages/root.mjs';
 import { PagesEnter } from './pages/enter/room.mjs'
