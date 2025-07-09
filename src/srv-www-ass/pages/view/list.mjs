@@ -14,6 +14,17 @@ export class PagesViewList {
         this.api = api;
         this.router = router;
         this.deviceDetector = deviceDetector;
+        this.pollingInterval = null; // ポーリング用のタイマー
+        
+        // visibilitychangeハンドラーをバインド（削除時に必要）
+        this.handleVisibilityChange = () => {
+            if (document.hidden) {
+                this.stopPolling();
+            } else {
+                this.startPolling();
+            }
+        };
+        
         this.statusMap = {
             1: { icon: '😊', text: '空いている', class: 'status-1' },
             2: { icon: '🙂', text: 'やや空き', class: 'status-2' },
@@ -40,7 +51,8 @@ export class PagesViewList {
             // イベントリスナーを設定
             this.setupEventListeners();
 
-            // TODO: 30秒おきのポーリングを行って
+            // 30秒おきのポーリングを開始
+            this.startPolling();
 
         } catch (error) {
             console.error('ViewListPage render error:', error);
@@ -53,7 +65,13 @@ export class PagesViewList {
      */
     async loadAndDisplayData() {
         try {
-            // TODO: HEADリクエストで更新がなかった場合だけ取得し更新を走らせて
+            // HEADリクエストで更新チェック
+            const hasUpdates = await this.api.hasCrowdStatusUpdated();
+            
+            if (!hasUpdates) {
+                console.log('データに更新がないため、表示の更新をスキップします');
+                return;
+            }
 
             const [rooms, crowdData] = await Promise.all([
                 this.api.getRooms(),
@@ -147,12 +165,45 @@ export class PagesViewList {
             refreshBtn.addEventListener('click', () => this.loadAndDisplayData());
         }
 
-        // TODO: 入力画面へボタンは不要
+        // ページが非表示になった時にポーリングを停止
+        document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    }
 
-        // 入力画面へボタン
-        const inputBtn = document.getElementById('inputBtn');
-        if (inputBtn) {
-            inputBtn.addEventListener('click', () => this.router.navigateTo('/enter'));
+    /**
+     * 30秒おきのポーリングを開始
+     */
+    startPolling() {
+        // 既存のタイマーがあれば停止
+        this.stopPolling();
+        
+        console.log('混雑状況のポーリングを開始します（30秒間隔）');
+        this.pollingInterval = setInterval(async () => {
+            try {
+                await this.loadAndDisplayData();
+            } catch (error) {
+                console.error('ポーリング中にエラーが発生しました:', error);
+            }
+        }, 30000); // 30秒間隔
+    }
+
+    /**
+     * ポーリングを停止
+     */
+    stopPolling() {
+        if (this.pollingInterval) {
+            console.log('混雑状況のポーリングを停止します');
+            clearInterval(this.pollingInterval);
+            this.pollingInterval = null;
         }
+    }
+
+    /**
+     * クリーンアップ処理
+     */
+    destroy() {
+        this.stopPolling();
+        
+        // visibilitychangeイベントリスナーを削除
+        document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     }
 }

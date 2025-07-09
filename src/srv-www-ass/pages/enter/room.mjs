@@ -1,8 +1,6 @@
 import { CrowdAPI } from '../../cmn/api.mjs';
 import { TemplateLoader } from '../../cmn/utils.mjs';
 
-// TODO: ここでは状態を表示しないで 入力専用です
-
 /**
  * 特定教室入力ページモジュール
  */
@@ -50,9 +48,6 @@ export class PagesEnterRoom {
             // 教室データを取得
             await this.loadRoomData();
 
-            // 現在の混雑状況を取得・表示
-            await this.loadCurrentStatus();
-
             // イベントリスナーを設定
             this.setupEventListeners();
 
@@ -83,36 +78,6 @@ export class PagesEnterRoom {
         } catch (error) {
             console.error('Room data loading error:', error);
             throw error;
-        }
-    }
-
-    /**
-     * 現在の混雑状況を取得・表示
-     */
-    async loadCurrentStatus() {
-        try {
-            const statusData = await this.api.getRoomCrowdStatus(this.roomId);
-            const status = this.statusMap[statusData.status] || { icon: '?', text: '不明', class: 'status-unknown' };
-
-            // 現在の状況を表示
-            const statusIcon = document.getElementById('currentStatusIcon');
-            const statusText = document.getElementById('currentStatusText');
-            const lastUpdated = document.getElementById('lastUpdated');
-
-            if (statusIcon) statusIcon.textContent = status.icon;
-            if (statusText) statusText.textContent = status.text;
-            if (lastUpdated) {
-                lastUpdated.textContent = new Date(statusData.updated_at).toLocaleString('ja-JP');
-            }
-
-            // 現在の状況エリアにクラスを追加
-            const currentStatus = document.getElementById('currentStatus');
-            if (currentStatus) {
-                currentStatus.className = `current-status ${status.class}`;
-            }
-
-        } catch (error) {
-            console.error('Current status loading error:', error);
         }
     }
 
@@ -150,9 +115,6 @@ export class PagesEnterRoom {
         try {
             await this.api.updateCrowdStatus(this.roomId, status);
             alert('混雑状況を更新しました！');
-
-            // 現在の状況を再読み込み
-            await this.loadCurrentStatus();
 
         } catch (error) {
             console.error('Status update error:', error);

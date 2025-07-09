@@ -1,10 +1,12 @@
 import { Router } from './cmn/router.mjs';
 import { CrowdAPI } from './cmn/api.mjs';
 import { RootPage } from './pages/root.mjs';
-import { ViewListPage } from './pages/view-list.mjs';
-import { EnterPage } from './pages/enter.mjs';
-import { EnterRoomPage } from './pages/enter-room.mjs';
 
+import { Pages } from './pages/root.mjs';
+import { PagesEnter } from './pages/enter/room.mjs'
+import { PagesEnterRoom } from './pages/enter/room.mjs'
+import { PagesView } from './pages/view/root.mjs'
+import { PagesViewList } from './pages/view/list.mjs';
 /**
  * アプリケーションメインクラス
  */
@@ -14,12 +16,15 @@ class App {
         this.api = new CrowdAPI();
         this.deviceDetector = new DeviceDetector();
         this.pages = {
-            // TODO: 構造整理
-
-            root: new RootPage(this.api, this.router, this.deviceDetector),
-            viewList: new ViewListPage(this.api, this.router, this.deviceDetector),
-            enter: new EnterPage(this.api, this.router, this.deviceDetector),
-            enterRoom: new EnterRoomPage(this.api, this.router, this.deviceDetector)
+            root: new Pages(this.api, this.router, this.deviceDetector),
+            enter: {
+                root: new PagesEnter(this.api, this.router, this.deviceDetector),
+                room: new PagesEnterRoom(this.api, this.router, this.deviceDetector)
+            },
+            view: {
+                root: new PagesView(this.api, this.router, this.deviceDetector),
+                list: new PagesViewList(this.api, this.router, this.deviceDetector)
+            }
         };
 
         this.setupRoutes();
@@ -29,26 +34,25 @@ class App {
      * ルーティングを設定
      */
     setupRoutes() {
-        // TODO: copilotに消し飛ばされたので注意
-
-        // ルートページ
         this.router.addRoute('/', (container, params) => {
             this.pages.root.render(container, params);
         });
 
+        this.router.addRoute('/enter', (container, params) => {
+            this.pages.enter.root.render(container, params);
+        });
+
+        this.router.addRoute('/enter/:room_id', (container, params) => {
+            this.pages.enter.room.render(container, params);
+        });
+
+        this.router.addRoute('/view', (container, params) => {
+            this.pages.view.root.render(container, params);
+        });
+
         // 混雑状況表示ページ(リスト形式)
         this.router.addRoute('/view/list', (container, params) => {
-            this.pages.viewList.render(container, params);
-        });
-
-        // 入力ページ（教室選択付き）
-        this.router.addRoute('/enter', (container, params) => {
-            this.pages.enter.render(container, params);
-        });
-
-        // 入力ページ（特定教室）
-        this.router.addRoute('/enter/:room_id', (container, params) => {
-            this.pages.enterRoom.render(container, params);
+            this.pages.view.list.render(container, params);
         });
     }
 }

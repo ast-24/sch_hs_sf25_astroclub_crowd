@@ -1,8 +1,6 @@
 import { CrowdAPI } from '../../cmn/api.mjs';
 import { TemplateLoader } from '../../cmn/utils.mjs';
 
-// TODO: 選択した教室の入力ページに遷移できるボタンも追加して
-
 /**
  * 入力ページモジュール（教室選択）
  */
@@ -99,16 +97,32 @@ export class PagesEnter {
         if (viewBtn) {
             viewBtn.addEventListener('click', () => this.router.navigateTo('/view/list'));
         }
+
+        // 教室入力ページへ遷移ボタン
+        const enterRoomBtn = document.getElementById('enterRoomBtn');
+        if (enterRoomBtn) {
+            enterRoomBtn.addEventListener('click', () => {
+                if (this.selectedRoom) {
+                    this.router.navigateTo(`/enter/${this.selectedRoom}`);
+                }
+            });
+        }
     }
 
     /**
-     * 混雑状況ボタンの表示/非表示を切り替え
+     * 混雑状況ボタンと教室入力ボタンの表示/非表示を切り替え
      * @param {boolean} show - 表示するかどうか
      */
     toggleStatusButtons(show) {
         const statusButtons = document.getElementById('statusButtons');
+        const enterRoomBtn = document.getElementById('enterRoomBtn');
+
         if (statusButtons) {
             statusButtons.style.display = show ? 'block' : 'none';
+        }
+
+        if (enterRoomBtn) {
+            enterRoomBtn.style.display = show ? 'inline-block' : 'none';
         }
     }
 
