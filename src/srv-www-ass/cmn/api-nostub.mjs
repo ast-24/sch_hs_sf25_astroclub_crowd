@@ -31,8 +31,7 @@ export class CrowdAPI {
             this.roomsCache = data.rooms;
             return this.roomsCache;
         } catch (error) {
-            console.error('API error, falling back to mock data:', error);
-
+            console.error('API error:', error);
             throw new Error('教室情報の取得に失敗しました。APIが利用できない可能性があります。');
         }
     }
@@ -54,7 +53,7 @@ export class CrowdAPI {
 
             return data.crowd;
         } catch (error) {
-            console.error('API error, falling back to mock data:', error);
+            console.error('API error:', error);
             throw new Error('混雑状況の取得に失敗しました。APIが利用できない可能性があります。');
         }
     }
@@ -77,7 +76,7 @@ export class CrowdAPI {
 
             return data;
         } catch (error) {
-            console.error('API error, falling back to mock data:', error);
+            console.error('API error:', error);
             throw new Error(`教室 ${roomId} の混雑状況の取得に失敗しました。APIが利用できない可能性があります。`);
         }
     }
@@ -104,7 +103,7 @@ export class CrowdAPI {
 
             return { success: true };
         } catch (error) {
-            console.error('API error, falling back to mock:', error);
+            console.error('API error:', error);
             throw new Error(`教室 ${roomId} の混雑状況の更新に失敗しました。APIが利用できない可能性があります。`);
         }
     }

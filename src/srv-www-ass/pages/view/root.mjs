@@ -67,7 +67,7 @@ export class PagesView {
         const selectorContainer = document.getElementById('viewModeSelector');
         if (!selectorContainer) return;
 
-        const isMobile = window.innerWidth < 768;
+        const isMobile = this.deviceDetector.constructor.getDeviceType() === 'mobile';
 
         selectorContainer.innerHTML = `
             <div class="view-mode-buttons ${isMobile ? 'mobile' : 'pc'}">

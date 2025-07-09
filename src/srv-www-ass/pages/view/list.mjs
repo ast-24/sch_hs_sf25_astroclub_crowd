@@ -15,7 +15,7 @@ export class PagesViewList {
         this.router = router;
         this.deviceDetector = deviceDetector;
         this.pollingInterval = null; // ポーリング用のタイマー
-        
+
         // visibilitychangeハンドラーをバインド（削除時に必要）
         this.handleVisibilityChange = () => {
             if (document.hidden) {
@@ -24,7 +24,7 @@ export class PagesViewList {
                 this.startPolling();
             }
         };
-        
+
         this.statusMap = {
             1: { icon: '😊', text: '空いている', class: 'status-1' },
             2: { icon: '🙂', text: 'やや空き', class: 'status-2' },
@@ -67,7 +67,7 @@ export class PagesViewList {
         try {
             // HEADリクエストで更新チェック
             const hasUpdates = await this.api.hasCrowdStatusUpdated();
-            
+
             if (!hasUpdates) {
                 console.log('データに更新がないため、表示の更新をスキップします');
                 return;
@@ -78,7 +78,7 @@ export class PagesViewList {
                 this.api.getCrowdStatus()
             ]);
 
-            const isMobile = window.innerWidth < 768;
+            const isMobile = this.deviceDetector.constructor.getDeviceType() === 'mobile';
             if (isMobile) {
                 this.renderMobileView(rooms, crowdData);
             } else {
@@ -175,7 +175,7 @@ export class PagesViewList {
     startPolling() {
         // 既存のタイマーがあれば停止
         this.stopPolling();
-        
+
         console.log('混雑状況のポーリングを開始します（30秒間隔）');
         this.pollingInterval = setInterval(async () => {
             try {
@@ -202,7 +202,7 @@ export class PagesViewList {
      */
     destroy() {
         this.stopPolling();
-        
+
         // visibilitychangeイベントリスナーを削除
         document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     }

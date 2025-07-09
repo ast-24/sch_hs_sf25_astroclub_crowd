@@ -35,8 +35,9 @@ export class PagesEnterRoom {
 
         if (!this.roomId) {
             container.innerHTML = '<div class="error">教室IDが指定されていません</div>';
-            sleep(1000);
-            this.router.navigateTo('/enter');
+            setTimeout(() => {
+                this.router.navigateTo('/enter');
+            }, 1000);
             return;
         }
 

@@ -116,7 +116,7 @@ export class Router {
             <div class="error-page">
                 <h2>404 - ページが見つかりません</h2>
                 <p>URLを確認してください</p>
-                <button onclick="window.history.back()">戻る</button>
+                <button onclick="location.href='/'">トップに戻る</button>
             </div>
         `;
     }

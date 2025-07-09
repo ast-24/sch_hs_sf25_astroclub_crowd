@@ -14,9 +14,8 @@ export class DeviceDetector {
      * @returns {'pc'|'mobile'} デバイスタイプ
      */
     static getDeviceType() {
-        // 縦横どちらが長いかだけで判定
-        const aspectRatio = window.innerWidth / window.innerHeight;
-        return aspectRatio < 1.0 ? 'mobile' : 'pc';
+        // 768px以下をモバイルとして判定（一般的なブレークポイント）
+        return window.innerWidth <= 768 ? 'mobile' : 'pc';
     }
 
     /**
