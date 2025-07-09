@@ -1,0 +1,46 @@
+<div class="enter-room-page">
+    <header>
+        <h1>✏️ <span id="roomName"></span></h1>
+        <p>混雑状況を入力してください</p>
+    </header>
+
+    <div class="current-status" id="currentStatus">
+        <h3>現在の状況:</h3>
+        <div class="status-display">
+            <span class="status-icon" id="currentStatusIcon"></span>
+            <span class="status-text" id="currentStatusText"></span>
+        </div>
+        <div class="last-updated">最終更新: <span id="lastUpdated"></span></div>
+    </div>
+
+    <div class="status-buttons">
+        <h3>新しい状況を選択:</h3>
+        <div class="button-grid">
+            <button class="status-btn" data-status="1">
+                <span class="status-icon">😊</span>
+                <span class="status-text">空いている</span>
+            </button>
+            <button class="status-btn" data-status="2">
+                <span class="status-icon">🙂</span>
+                <span class="status-text">やや空き</span>
+            </button>
+            <button class="status-btn" data-status="3">
+                <span class="status-icon">😐</span>
+                <span class="status-text">普通</span>
+            </button>
+            <button class="status-btn" data-status="4">
+                <span class="status-icon">😓</span>
+                <span class="status-text">やや混雑</span>
+            </button>
+            <button class="status-btn" data-status="5">
+                <span class="status-icon">😵</span>
+                <span class="status-text">混雑</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button id="viewBtn" class="btn btn-secondary">📊 混雑状況を見る</button>
+        <button id="selectBtn" class="btn btn-tertiary">🔄 他の教室を選択</button>
+    </div>
+</div>
