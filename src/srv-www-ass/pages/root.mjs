@@ -5,7 +5,7 @@ import { TemplateLoader } from '../cmn/utils.mjs';
  * ルートページモジュール
  * 表示モード及び入力モードを選択するためのUI
  */
-export class RootPage {
+export class Pages {
     /**
      * @param {CrowdAPI} api - APIクライアント
      * @param {Object} router - ルーター
