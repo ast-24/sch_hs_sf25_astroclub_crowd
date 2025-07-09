@@ -2,7 +2,7 @@ import { Router } from './cmn/router.mjs';
 import { CrowdAPI } from './cmn/api.mjs';
 
 import { Pages } from './pages/root.mjs';
-import { PagesEnter } from './pages/enter/room.mjs'
+import { PagesEnter } from './pages/enter/root.mjs'
 import { PagesEnterRoom } from './pages/enter/room.mjs'
 import { PagesView } from './pages/view/root.mjs'
 import { PagesViewList } from './pages/view/list.mjs';
