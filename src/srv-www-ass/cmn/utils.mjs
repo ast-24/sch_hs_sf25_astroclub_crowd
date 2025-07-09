@@ -5,7 +5,7 @@ export class DeviceDetector {
     /**
      * @param {string} baseUrl - アセットのベースURL
      */
-    constructor(baseUrl = 'https://api-sf25-astroclub.ast24.dev') {
+    constructor(baseUrl = 'https://ass-sf25-astroclub.ast24.dev') {
         this.baseUrl = baseUrl;
     }
 
