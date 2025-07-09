@@ -25,8 +25,8 @@ export class DeviceDetector {
      */
     getDeviceSpecificPath(subPath = '') {
         const deviceType = DeviceDetector.getDeviceType();
-        const fullPath = subPath ? `${this.baseUrl}${subPath}/` : this.baseUrl;
-        return `${fullPath}${deviceType}.html`;
+        const fullPath = subPath ? `${this.baseUrl}${subPath}` : `${this.baseUrl}`;
+        return `${fullPath}/${deviceType}.html`;
     }
 }
 
