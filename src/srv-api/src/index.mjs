@@ -40,16 +40,11 @@ router.put('/crowd/:room_id', async (request, env, ctx) => {
 	return new Response('crowd/:room_id endpoint - PUT');
 });
 
-// 404 fallback - マッチするルートがない場合
-router.all('*', () => new Response('Not Found', { status: 404 }));
-
 export default {
 	async fetch(request, env, ctx) {
 		try {
-			// ルーティングを実行
 			return await router.fetch(request, env, ctx);
 		} catch (error) {
-			// エラーハンドリング
 			return new Response('Internal Server Error', { status: 500 });
 		}
 	},
