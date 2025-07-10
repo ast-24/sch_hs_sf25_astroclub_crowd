@@ -10,7 +10,8 @@ export async function handler_crowd_get(request, env, ctx) {
                 secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
             }
         })).send(new ScanCommand({ TableName: "crowd-status" }))).Items) {
-            res[item.room_id.S] = {
+            console.log(JSON.stringify(item));
+            res[item.roomid.S] = {
                 status: Number(item.status.N),
                 updated_at: Number(item.updated_at.N)
             };
