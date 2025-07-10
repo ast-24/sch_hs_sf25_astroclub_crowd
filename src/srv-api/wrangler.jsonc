@@ -5,11 +5,17 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "astroclub-sf25-api",
-	"main": "src/index.ts",
-	"compatibility_date": "2025-07-09",
+	"main": "src/index.js",
+	"compatibility_date": "2025-07-10",
 	"observability": {
 		"enabled": true
-	}
+	},
+	"kv_namespaces": [
+		{
+			"binding": "astroclub_sf25_db_minidata",
+			"id": "3defde07c71f4bde90cb0ca63ab19b34"
+		}
+	]
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

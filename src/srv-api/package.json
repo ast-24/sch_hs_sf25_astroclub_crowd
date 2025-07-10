@@ -6,16 +6,15 @@
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
 		"start": "wrangler dev",
-		"test": "vitest",
-		"cf-typegen": "wrangler types"
+		"test": "vitest"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.8.19",
-		"typescript": "^5.5.2",
 		"vitest": "~3.2.0",
 		"wrangler": "^4.24.0"
 	},
 	"dependencies": {
-		"@aws-sdk/client-dynamodb": "^3.844.0"
+		"@aws-sdk/client-dynamodb": "^3.844.0",
+		"itty-router": "^5.0.18"
 	}
 }

@@ -14,14 +14,16 @@ APIエンドポイントとDBを提供する
 ただし、Cloudflare Workers KVは1000書き込み/日の制限があるため微妙なライン  
 DynamoDB等も選択肢に入れておく
 
+教室情報のような静的なデータはWorkers KVに保存し、  
+混雑状況のような頻繁に更新されるデータはDynamoDBを使用する
+
 ## APIエンドポイント
 
 - `/rooms`: 教室の一覧
   - GET : 教室の一覧を取得
     - レスポンス
       - ボディ
-        - `rooms`: 教室データのリスト
-          - `room_id`: 教室ID
+        - `:room_id`: 教室ID
           - `name`: 教室名
           - `description`: 教室の説明
           - `floor`: 教室の階数
