@@ -17,11 +17,11 @@ export class PagesViewList {
         this.pollingInterval = null; // ポーリング用のタイマー
 
         // visibilitychangeハンドラーをバインド（削除時に必要）
-        this.handleVisibilityChange = () => {
+        this.handleVisibilityChange = async () => {
             if (document.hidden) {
                 this.stopPolling();
             } else {
-                this.startPolling();
+                await this.startPolling();
             }
         };
 
@@ -158,13 +158,6 @@ export class PagesViewList {
      * イベントリスナーを設定
      */
     setupEventListeners() {
-
-        // 更新ボタン
-        const refreshBtn = document.getElementById('refreshBtn');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => this.loadAndDisplayData());
-        }
-
         // ページが非表示になった時にポーリングを停止
         document.addEventListener('visibilitychange', this.handleVisibilityChange);
     }
@@ -172,10 +165,15 @@ export class PagesViewList {
     /**
      * 30秒おきのポーリングを開始
      */
-    startPolling() {
+    async startPolling() {
         // 既存のタイマーがあれば停止
         this.stopPolling();
 
+        try {
+            await this.loadAndDisplayData();
+        } catch (error) {
+            console.error('ポーリング中にエラーが発生しました:', error);
+        }
         console.log('混雑状況のポーリングを開始します（30秒間隔）');
         this.pollingInterval = setInterval(async () => {
             try {

@@ -94,18 +94,6 @@ export class PagesEnterRoom {
                 this.updateStatus(status);
             });
         });
-
-        // 混雑状況を見るボタン
-        const viewBtn = document.getElementById('viewBtn');
-        if (viewBtn) {
-            viewBtn.addEventListener('click', () => this.router.navigateTo('/view/list'));
-        }
-
-        // 他の教室を選択ボタン
-        const selectBtn = document.getElementById('selectBtn');
-        if (selectBtn) {
-            selectBtn.addEventListener('click', () => this.router.navigateTo('/enter'));
-        }
     }
 
     /**

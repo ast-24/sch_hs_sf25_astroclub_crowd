@@ -15,7 +15,10 @@ class App {
     constructor() {
         this.router = new Router();
         this.api = new CrowdAPI();
-        this.deviceDetector = new DeviceDetector();
+        // @本番用
+        //this.deviceDetector = new DeviceDetector();
+        // @ローカルテスト用
+        this.deviceDetector = new DeviceDetector("http://127.0.0.1:5500/");
         this.pages = {
             root: new Pages(this.api, this.router, this.deviceDetector),
             enter: {
