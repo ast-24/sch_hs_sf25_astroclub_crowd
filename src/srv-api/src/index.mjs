@@ -41,7 +41,7 @@ router.put('/crowd/:room_id', async (request, env, ctx) => {
 });
 
 export default {
-	fetch(request, env, ctx) {
-		return router.handle(request, env, ctx);
+	async fetch(request, env, ctx) {
+		return await router.handle(request, env, ctx);
 	},
 };
