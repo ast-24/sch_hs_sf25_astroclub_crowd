@@ -10,6 +10,7 @@
 
 import { AutoRouter } from 'itty-router';
 import { handler_rooms_get } from './endpoints/rooms/get.mjs';
+import { handler_crowd_get } from './endpoints/crowd/get.mjs';
 
 const router = AutoRouter();
 
@@ -21,10 +22,7 @@ router.head('/crowd', async (request, env, ctx) => {
 	// TODO: 全教室の混雑状況の更新状況確認
 	return new Response("crowd endpoint - HEAD");
 });
-router.get('/crowd', async (request, env, ctx) => {
-	// TODO: 全教室の混雑状況取得
-	return new Response('crowd endpoint - GET');
-});
+router.get('/crowd', handler_crowd_get);
 
 // /crowd/:room_id: 特定教室の混雑状況
 router.head('/crowd/:room_id', async (request, env, ctx) => {
