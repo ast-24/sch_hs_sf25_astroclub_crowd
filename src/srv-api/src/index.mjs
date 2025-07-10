@@ -8,10 +8,10 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-import { Router } from 'itty-router';
+import { AutoRouter } from 'itty-router';
 import { handler_rooms_get } from './endpoints/rooms/get.mjs';
 
-const router = Router();
+const router = AutoRouter();
 
 // /rooms: 教室の一覧
 router.get('/rooms', handler_rooms_get);
@@ -40,8 +40,17 @@ router.put('/crowd/:room_id', async (request, env, ctx) => {
 	return new Response('crowd/:room_id endpoint - PUT');
 });
 
+// 404 fallback - マッチするルートがない場合
+router.all('*', () => new Response('Not Found', { status: 404 }));
+
 export default {
 	async fetch(request, env, ctx) {
-		return await router.handle(request, env, ctx);
+		try {
+			// ルーティングを実行
+			return await router.fetch(request, env, ctx);
+		} catch (error) {
+			// エラーハンドリング
+			return new Response('Internal Server Error', { status: 500 });
+		}
 	},
 };
