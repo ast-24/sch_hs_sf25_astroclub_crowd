@@ -1,22 +1,17 @@
-import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
+import { crowd_data_get_all } from '../../cmn/dynamoquery.mjs';
 
 export async function handler_crowd_get(request, env, ctx) {
     try {
-        let res = {};
-        for (const item of (await (new DynamoDBClient({
-            region: "ap-northeast-1", // 必要に応じて
-            credentials: {
-                accessKeyId: env.AWS_ACCESS_KEY_ID,
-                secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
-            }
-        })).send(new ScanCommand({ TableName: "crowd-status" }))).Items) {
+        let resp = {};
+        for (const item of await crowd_data_get_all(env)) {
             console.log(JSON.stringify(item));
-            res[item.roomid.S] = {
+            resp[item.roomid.S] = {
                 status: Number(item.status.N),
                 updated_at: Number(item.updated_at.N)
             };
         }
-        return new Response(JSON.stringify(res), {
+        return new Response(JSON.stringify(resp), {
+            status: 200,
             headers: {
                 'Content-Type': 'application/json',
                 'Cache-Control': 'public, max-age=30' // 30秒間キャッシュ
@@ -24,7 +19,7 @@ export async function handler_crowd_get(request, env, ctx) {
         });
     }
     catch (error) {
-        console.error("Error fetching crowd data:", error);
+        console.error("[ERROR]", error);
         return new Response('Internal Server Error', { status: 500 });
     }
 }

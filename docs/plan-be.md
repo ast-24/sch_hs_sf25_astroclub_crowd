@@ -28,22 +28,13 @@ DynamoDB等も選択肢に入れておく
           - `description`: 教室の説明
           - `floor`: 教室の階数
 - `/crowd`: 混雑状況
-  - HEAD: 全教室の混雑状況の更新状況の確認
-    - レスポンス
-      - ヘッダー
-        - `Last-Modified`: 最終更新日時
   - GET : 全教室の混雑状況を取得
     - レスポンス
       - ボディ
-        - `crowd`: 混雑状況データのリスト
-          - `room_id`: 教室ID
+        - `:room_id`: 教室ID
           - `status`: 混雑状況(number)
           - `updated_at`: 更新日時
 - `/crowd/:room_id`: 特定教室の混雑状況
-  - HEAD: 特定教室の混雑状況の更新状況の確認
-    - レスポンス
-      - ヘッダー
-        - `Last-Modified`: 最終更新日時
   - GET : 特定教室の混雑状況を取得
     - レスポンス
       - ボディ
@@ -53,6 +44,8 @@ DynamoDB等も選択肢に入れておく
     - リクエスト
       - ボディ
         - `status`: 混雑状況(number)
+
+※ HEADを用意するにしてはレスポンスが小さすぎるのでGETのみ
 
 ## データストア
 
