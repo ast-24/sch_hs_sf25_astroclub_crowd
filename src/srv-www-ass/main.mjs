@@ -1,69 +1,52 @@
-import { Router } from './cmn/router.mjs';
-import { CrowdAPI } from './cmn/api.mjs';
-import { DeviceDetector } from './cmn/utils.mjs';
+import { ApiClient, ApiClientStub } from './cmn.mjs';
+import { SpaCore, HandlerFactoryInterfaceImpl } from './spalib.mjs';
+import { themeRenderer } from './theme/main.mjs'
 
-import { Pages } from './pages/root.mjs';
-import { PagesEnter } from './pages/enter/root.mjs'
-import { PagesEnterRoom } from './pages/enter/room.mjs'
-import { PagesView } from './pages/view/root.mjs'
-import { PagesViewList } from './pages/view/list.mjs';
+// デプロイ時に文字列置換
+const ORIGIN_ASS_BASE_URL = "{{ASS_ORIGIN}}";
+const ORIGIN_API_BASE_URL = "{{API_ORIGIN}}";
 
-/**
- * アプリケーションメインクラス
- */
-class App {
-    constructor() {
-        this.router = new Router();
-        this.api = new CrowdAPI();
-        // @本番用
-        this.deviceDetector = new DeviceDetector();
-        // @ローカルテスト用
-        //this.deviceDetector = new DeviceDetector("http://127.0.0.1:5500/");
-        this.pages = {
-            root: new Pages(this.api, this.router, this.deviceDetector),
-            enter: {
-                root: new PagesEnter(this.api, this.router, this.deviceDetector),
-                room: new PagesEnterRoom(this.api, this.router, this.deviceDetector)
-            },
-            view: {
-                root: new PagesView(this.api, this.router, this.deviceDetector),
-                list: new PagesViewList(this.api, this.router, this.deviceDetector)
-            }
-        };
-
-        this.setupRoutes();
-
-        this.router.handleRoute(); // 初期ルート処理
-    }
-
-    /**
-     * ルーティングを設定
-     */
-    setupRoutes() {
-        this.router.addRoute('/', (container, params) => {
-            this.pages.root.render(container, params);
+async function run() {
+    // アプリケーション初期化
+    document.addEventListener('DOMContentLoaded', async () => {
+        const spaCore = new SpaCore({
+            resourcesBaseUrl: ORIGIN_ASS_BASE_URL,
+            containerId: "app_container",
+            title: "天文部 文化祭 混雑状況表示システム",
+            themeRenderer: themeRenderer,
+            themeRendererOnResize: themeRenderer,// 同じものでよい
+            routeConfigurer: routeConfigurer
         });
-
-        this.router.addRoute('/enter', (container, params) => {
-            this.pages.enter.root.render(container, params);
-        });
-
-        this.router.addRoute('/enter/:room_id', (container, params) => {
-            this.pages.enter.room.render(container, params);
-        });
-
-        this.router.addRoute('/view', (container, params) => {
-            this.pages.view.root.render(container, params);
-        });
-
-        // 混雑状況表示ページ(リスト形式)
-        this.router.addRoute('/view/list', (container, params) => {
-            this.pages.view.list.render(container, params);
-        });
-    }
+        await spaCore.start();
+    });
 }
 
-// アプリケーション初期化
-document.addEventListener('DOMContentLoaded', () => {
-    new App();
-});
+const appClient =
+    ORIGIN_API_BASE_URL
+        ? new ApiClient(ORIGIN_API_BASE_URL)
+        : new ApiClientStub(ORIGIN_API_BASE_URL);
+
+async function routeConfigurer(router) {
+    router
+        .registerHandlerFactory(
+            'dashboard',
+            new HandlerFactoryInterfaceImpl(
+                async (entities, context) => {
+                    const { DashboardHandlerCreator } = await import('./page/dashboard/main.mjs');
+                    return await DashboardHandlerCreator(entities, appClient, context);
+                })
+        )
+        .registerHandlerFactory(
+            'enter/:roomid',
+            new HandlerFactoryInterfaceImpl(
+                async (entities, context) => {
+                    const { EnterHandlerCreator } = await import('./page/enter/main.mjs');
+                    return await EnterHandlerCreator(entities, appClient, context);
+                })
+        );
+    // >! error / notfound
+}
+
+run();
+
+// >!全体的に影付けて立体的に

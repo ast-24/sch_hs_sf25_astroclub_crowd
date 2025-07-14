@@ -1,0 +1,209 @@
+.rendering-area {
+    position: relative;
+
+    .background-area {
+        position: fixed;
+        background: #0a1e3c;
+    }
+
+    .content-area {
+        position: relative;
+        padding: 1vh 2vw;
+
+        .content-border {
+            position: relative;
+
+            background-color: #ffffff20;
+            border-radius: 2vh;
+            padding: 1vh 1vw 2vh 1vw;
+
+            .header {
+                margin: 0 auto;
+                padding: 1vh 4vw;
+
+                width: fit-content;
+
+                background-color: #ffffff30;
+                border-radius: 1vh;
+
+                .subtitle {
+                    margin: 0 auto;
+
+                    text-align: center;
+                    color: #b3e0ff;
+                    font-size: 8vw;
+                }
+
+                .title {
+                    margin: 0 auto;
+
+                    text-align: center;
+                    color: #4fc3f7;
+                    font-size: 10vw;
+                    line-height: 10vw;
+                }
+            }
+
+            .room-info {
+                margin: 2vh auto 0 auto;
+                padding: 2vh 1vw;
+
+                width: fit-content;
+
+                background-color: #ffffff30;
+                border-radius: 1vh;
+
+                .room-name {
+                    margin: 0 auto;
+
+                    text-align: center;
+                    font-size: 6vw;
+                    color: #4fc3f7;
+                }
+            }
+
+            .status-buttons {
+                margin: 1vh auto 0 auto;
+                padding: 1vh 1vw;
+
+                background-color: #ffffff10;
+                border-radius: 1vh;
+
+                .enter-message {
+                    margin: 0 auto;
+                    width: fit-content;
+                    border-radius: 1vh;
+
+                    .message {
+                        margin: 0 auto;
+
+                        text-align: center;
+                        font-size: 6vw;
+                        color: #b3e0ff;
+                    }
+                }
+
+                .button-grid {
+                    margin: 1vh auto;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    gap: 1vh;
+
+                    .status-btn {
+                        flex: 1 1 20%;
+                        padding: 1vh 0.5vw 1.5vh 0.5vw;
+
+                        border-radius: 1vh;
+                        cursor: pointer;
+
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+
+                        .status-icon {
+                            display: block;
+                            font-size: 12vw;
+                        }
+
+                        .status-text {
+                            margin: auto auto auto 3vw;
+                            display: block;
+                            font-size: 7vw;
+                            padding: auto 0 auto 0;
+                            color: #bbdefb;
+                        }
+
+                        &.status-btn-1 {
+                            background-color: #2196f328;
+
+                            /* 空いています: 青系 */
+                            &:hover {
+                                background-color: #2196f348;
+                            }
+                        }
+
+                        &.status-btn-2 {
+                            background-color: #4caf5028;
+
+                            /* 少し混雑: 緑系 */
+                            &:hover {
+                                background-color: #4caf5048;
+                            }
+                        }
+
+                        &.status-btn-3 {
+                            background-color: #fff17628;
+
+                            /* 中程度: 黄系 */
+                            &:hover {
+                                background-color: #fff17648;
+                            }
+                        }
+
+                        &.status-btn-4 {
+                            background-color: #ff980028;
+
+                            /* かなり混雑: オレンジ系 */
+                            &:hover {
+                                background-color: #ff980048;
+                            }
+                        }
+
+                        &.status-btn-5 {
+                            background-color: #e5393528;
+
+                            /* 満員: 赤系 */
+                            &:hover {
+                                background-color: #e5393548;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .after-send-message {
+                display: none;
+
+                .cover {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    z-index: 9998;
+                    background: #000000b0;
+                }
+
+                .message-box {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    z-index: 9999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: rgba(10, 30, 60, 0.18);
+                    pointer-events: none;
+                    transition: opacity 0.3s;
+                    padding: 2vh 4vw;
+
+                    .message {
+                        background-color: #ffffff40;
+                        border-radius: 1vh;
+                        box-shadow: 0 2px 16px 0 #0002;
+                        margin: 0 auto;
+                        padding: 2vh 4vw;
+                        text-align: center;
+                        font-size: 8vw;
+                        color: #b3e0ff;
+                        font-weight: bold;
+                        letter-spacing: 0.05em;
+                    }
+                }
+            }
+        }
+    }
+}

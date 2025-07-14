@@ -5,7 +5,7 @@ export async function handler_rooms_get(request, env, ctx) {
             {
                 ":room_id": {
                     "name": "<教室名>",
-                    "description": "<教室の説明>",
+                    "desc": "<教室の説明>",
                     "floor": <教室の階数>
                 },
                 ...

@@ -1,0 +1,139 @@
+#page_container {
+    position: relative;
+
+    .data_state_area {
+        margin: 2vh 8vw auto auto;
+        padding: 0.5vh 1vw;
+
+        width: fit-content;
+
+        background-color: #ffffff10;
+        border-radius: 1vh;
+
+        .last_updated {
+            text-align: center;
+            color: #b3e0ff;
+            font-size: 3vh;
+        }
+    }
+
+    .data_table_area {
+        margin: 2vh 2vw;
+
+        border-radius: 1vh;
+
+        .data_table {
+            width: 100%;
+
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 1vh;
+            overflow: hidden;
+
+            th {
+                background-color: #ffffff20;
+                border-bottom: 3px solid #e0f7ff50;
+                color: #b3e0ff;
+                font-weight: bold;
+                height: 8vh;
+            }
+
+            td {
+                border-bottom: 2px solid #ffffff20;
+                transition: background 0.2s;
+                height: 7.5vh;
+            }
+
+            th:nth-child(1),
+            td:nth-child(1) {
+                text-align: center;
+            }
+
+            th:nth-child(1) {
+                font-size: 4.5vh;
+                color: #b3e0ff;
+            }
+
+            td:nth-child(1) {
+                font-size: 3.5vh;
+                color: #b3e0ff;
+                font-weight: bold;
+            }
+
+            th:nth-child(2),
+            td:nth-child(2) {
+                text-align: center;
+            }
+
+            th:nth-child(2) {
+                font-size: 4.5vh;
+                color: #e3f2fd;
+            }
+
+            td:nth-child(2) {
+                font-size: 3.5vh;
+                color: #b3e0ff;
+            }
+
+            th:nth-child(3),
+            td:nth-child(3) {
+                text-align: center;
+            }
+
+            th:nth-child(3) {
+                font-size: 4.5vh;
+                color: #b3e0ff;
+            }
+
+            td:nth-child(3) {
+                font-size: 3.5vh;
+                color: #b3e0ff;
+            }
+
+            th:nth-child(4),
+            td:nth-child(4) {
+                text-align: right;
+                padding-right: 4vw;
+            }
+
+            th:nth-child(4) {
+                font-size: 3.5vh;
+                color: #b3e0ff;
+            }
+
+            td:nth-child(4) {
+                font-size: 3vh;
+                color: #b3e0ff;
+            }
+
+            tr {
+                transition: background 0.2s;
+
+                &.crowd-status-1 {
+                    background-color: #2196f320;
+                    /* 空いています: 青系 */
+                }
+
+                &.crowd-status-2 {
+                    background-color: #4caf5020;
+                    /* 少し混雑: 緑系 */
+                }
+
+                &.crowd-status-3 {
+                    background-color: #fff17620;
+                    /* 中程度: 黄系 */
+                }
+
+                &.crowd-status-4 {
+                    background-color: #ff980020;
+                    /* かなり混雑: オレンジ系 */
+                }
+
+                &.crowd-status-5 {
+                    background-color: #e5393520;
+                    /* 満員: 赤系 */
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,59 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+
+    font-family: "M PLUS Rounded 1c", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+html {
+    position: relative;
+    min-width: 100vw;
+    min-height: 100vh;
+
+    body {
+        position: relative;
+
+        #app_container {
+            position: relative;
+
+            .rendering_space {
+                position: relative;
+
+                .layer_back {
+                    position: fixed;
+                    background: #0a1e3c;
+                    z-index: 0;
+
+                    .background-star {
+                        z-index: 1;
+                    }
+                }
+
+                .layer_fore {
+                    position: relative;
+                    z-index: 2;
+                    padding: 3vh 2vw;
+
+                    .page_frame {
+                        position: relative;
+
+                        min-height: 94vh;
+                        background-color: #ffffff18;
+                        border-radius: 4vh;
+                        padding: 3vh 3vw;
+
+                        box-shadow: 0 0 1vw #000f,
+                            0 0 1vw #000f,
+                            0 0 1vw #000f;
+                    }
+                }
+            }
+        }
+    }
+}

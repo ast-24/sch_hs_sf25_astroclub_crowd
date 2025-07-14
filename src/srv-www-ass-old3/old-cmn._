@@ -1,0 +1,446 @@
+// アプリケーション全体を管理
+export class App {
+    /*
+        - urlBaseAssets
+        - urlBaseApi
+        - containerAppId
+        - deviceDetector
+        - containerApp
+        - assetLoaderApp
+        - containerContent
+        - assetLoaderContent
+        - apiClient
+        - router
+        - navigator
+     */
+
+    constructor(urlBaseAssets, urlBaseApi, containerAppId) {
+        this.urlBaseAssets = urlBaseAssets;
+        this.urlBaseApi = urlBaseApi;
+        this.containerAppId = containerAppId;
+    }
+
+    async start() {
+        this.deviceDetector = new DeviceDetector();
+
+        this.containerApp = document.getElementById(this.containerAppId);
+        this.assetLoaderApp = new AssetLoader(
+            this.containerApp,
+            this.deviceDetector,
+            this.urlBaseAssets
+        );
+
+        const baseContentRendererRet = await App.#baseContentRenderer(this.containerApp, this.assetLoaderApp);
+        this.containerContent = baseContentRendererRet.containerContent;
+        this.assetLoaderContent = new AssetLoader(
+            this.containerContent,
+            this.deviceDetector,
+            this.urlBaseAssets
+        );
+
+        if (this.urlBaseApi) {
+            this.apiClient = new ApiClient(this.urlBaseApi);
+        } else {
+            this.apiClient = new ApiClientStub(this.urlBaseApi);
+        }
+
+        this.router = new Router();
+
+        /*
+
+        this.navigator = new Navigator(
+            this.container,
+            this.assetLoader,
+            this.router,
+            { render: null, assetPath: "pages/404" },
+        );
+
+        routeRegister(
+            this.router,
+            this.container,
+            this.deviceDetector,
+            this.navigator,
+            this.assetLoader,
+            this.apiClient
+        );
+        */
+
+        /*
+        await this.navigator.start();
+        */
+    }
+
+    // ... -> { containerContent }
+    static async #baseContentRenderer(containerApp, assetLoaderApp) {
+        let ret = {};
+
+        await assetLoaderApp.loadPage("tpl/cmn/global.html", "tpl/cmn/global.css");
+
+        const canvas = containerApp.querySelector('.rendering_space .layer_back .star');
+        const backgroundStarRenderer = new BackgroundStarRenderer(canvas);
+        backgroundStarRenderer.rendering();
+        window.addEventListener('resize', () => {
+            backgroundStarRenderer.rendering();
+        });
+
+        ret.containerContent = containerApp.querySelector('.rendering_space .layer_fore .content');
+
+        return ret;
+    }
+}
+
+// コンテンツの読み込みと適用
+class AssetLoader {
+    constructor(container, deviceDetector, urlBaseAssets) {
+        this.container = container;
+        this.deviceDetector = deviceDetector;
+        this.urlBaseAssets = urlBaseAssets;
+    }
+
+    async fetchAsset(assetPath) {
+        try {
+            const resp = await fetch(`${this.urlBaseAssets}/${assetPath}`);
+            if (!resp.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await resp.blob();
+        } catch (error) {
+            console.error('Error loading asset:', error);
+            throw error;
+        }
+    }
+
+    async fetchTemplate(templatePath) {
+        try {
+            const resp = await this.fetchAsset(templatePath);
+            return await resp.text();
+        } catch (error) {
+            console.error('Error loading template:', error);
+            throw error;
+        }
+    }
+
+    async loadPage(htmlPath, cssPath) {
+        try {
+            const html = htmlPath ? await this.fetchTemplate(htmlPath) : '';
+            const style = cssPath ? `<style>${await this.fetchTemplate(cssPath)}</style>` : '';
+            this.container.innerHTML = `${style}\n${html}`;
+        } catch (error) {
+            console.error('Error loading page:', error);
+            throw error;
+        }
+    }
+
+    static #pathWithDevice(deviceDetector, path, ext) {
+        return deviceDetector.isMobi() ? `${path}/mobi.${ext}` : `${path}/pc.${ext}`;
+    }
+
+    async fetchAssetWithDevice(path, ext) {
+        return await this.fetchAsset(`${AssetLoader.#pathWithDevice(this.deviceDetector, path, ext)}`);
+    }
+
+    async fetchTemplateWithDevice(path, ext) {
+        return await this.fetchTemplate(`${AssetLoader.#pathWithDevice(this.deviceDetector, path, ext)}`);
+    }
+
+    async loadPageWithDevice(htmlPath, cssPath) {
+        return await this.loadPage(
+            htmlPath ? AssetLoader.#pathWithDevice(this.deviceDetector, htmlPath, 'html') : '',
+            cssPath ? AssetLoader.#pathWithDevice(this.deviceDetector, cssPath, 'css') : ''
+        );
+    }
+}
+
+// デバイスタイプを判定
+class DeviceDetector {
+    isMobi() {
+        return window.innerWidth < window.innerHeight;
+    }
+}
+
+// 背景の星を描画
+class BackgroundStarRenderer {
+    constructor(canvas) {
+        this.canvas = canvas;
+    }
+
+    rendering() {
+        BackgroundStarRenderer.#resizeCanvas(this.canvas);
+        BackgroundStarRenderer.#render(this.canvas);
+    }
+
+    static #resizeCanvas(canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    static #render(canvas) {
+        const baseDensity = 0.0015;
+        const count = Math.floor(canvas.width * canvas.height * baseDensity);
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < count; i++) {
+            const params = BackgroundStarRenderer.#genParams({
+                width: canvas.width,
+                height: canvas.height
+            });
+
+            ctx.beginPath();
+            ctx.arc(params.x, params.y, params.radius, 0, 2 * Math.PI);
+            ctx.fillStyle = `rgba(${params.r}, ${params.g}, ${params.b}, ${params.opacity})`;
+            ctx.shadowColor = 'white';
+            ctx.shadowBlur = params.shadowBlur;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    // ... -> { x, y, radius, opacity , r , g, b , shadowBlur }
+    static #genParams(canvas_size) {
+        let ret = {
+            x: Math.random() * canvas_size.width,
+            y: Math.random() * canvas_size.height,
+            radius: Math.random() * 0.5 + 0.5,
+            opacity: Math.random() * 0.5 + 0.2,
+            r: 255,
+            g: 255,
+            b: 255,
+            shadowBlur: Math.random() * 1.5
+        };
+
+        if (Math.random() < 0.1) {
+            ret.radius *= 2;
+            ret.opacity *= 2;
+        }
+        if (Math.random() < 0.005) {
+            ret.radius *= 4;
+            ret.opacity *= 4;
+        }
+        if (Math.random() < 0.0001) {
+            ret.radius *= 8;
+            ret.opacity *= 8;
+        }
+
+        if (Math.random() < 0.5) {
+            ret.r = Math.random() * 155 + 100;
+            ret.g = Math.random() * 155 + 100;
+            ret.b = Math.random() * 155 + 100;
+        }
+
+        return ret;
+    }
+}
+
+// APIリクエストのラップとキャッシュ
+class ApiClient {
+    constructor(url_base_api) {
+        this.url_base_api = url_base_api;
+    }
+
+    // その他処理
+}
+
+// APIクライアントのスタブ
+class ApiClientStub {
+    constructor(url_base_api) {
+        this.url_base_api = url_base_api;// 使わない
+
+        this.mockRooms = new Map([
+            ['darkroom', { name: '暗室', desc: 'プラネタリウム', floor: 3 }],
+            ['earth-lab', { name: '地学実験室', desc: '展示(岩石班)', floor: 3 }],
+            ['physics-lab', { name: '物理実験室', desc: '展示(附属中)', floor: 3 }],
+            ['s33', { name: 'S33', desc: '受付', floor: 3 }],
+            ['info-room3', { name: '情報教室3', desc: 'Mitaka/ミニ講義', floor: 2 }],
+            ['dome', { name: 'ドーム', desc: '天体望遠鏡', floor: 4 }]
+        ]);
+
+        this.mockCrowdData = new Map([
+            ['darkroom', { status: 2, updated_at: new Date(Date.now() - 5 * 60 * 1000) }],
+            ['earth-lab', { status: 4, updated_at: new Date(Date.now() - 2 * 60 * 1000) }],
+            ['physics-lab', { status: 1, updated_at: new Date(Date.now() - 8 * 60 * 1000) }],
+            ['s33', { status: 3, updated_at: new Date(Date.now() - 1 * 60 * 1000) }],
+            ['info-room3', { status: 5, updated_at: new Date(Date.now() - 3 * 60 * 1000) }],
+            ['dome', { status: 2, updated_at: new Date(Date.now() - 4 * 60 * 1000) }]
+        ]);
+
+        this.lastMockUpdate = new Date();
+    }
+
+    async getRooms() {
+        if (this.rooms_fetched) {
+            return this.mockRooms
+        }
+        await new Promise(resolve => setTimeout(resolve, 500)); // APIの動作を模擬
+        this.rooms_fetched = true;
+        return this.mockRooms;
+    }
+
+    async getCrowdStatus() {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // APIの動作を模擬
+        return this.mockCrowdData;
+    }
+
+    async getCrowdStatusRoom(roomid) {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // APIの動作を模擬
+
+        const data = this.mockCrowdData.get(roomid);
+        if (!data) {
+            throw new Error(`教室 ${roomid} が見つかりません`);
+        }
+
+        return {
+            status: data.status,
+            updated_at: data.updated_at
+        };
+    }
+
+    async updateCrowdStatus(roomid, status) {
+        if (status < 1 || 5 < status) {
+            throw new Error('混雑状況は1-5の範囲で指定してください');
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 1500)); // APIの動作を模擬
+
+        if (!this.mockCrowdData.has(roomid)) {
+            throw new Error(`教室 ${roomid} が見つかりません`);
+        }
+
+        this.mockCrowdData.set(roomid, {
+            status: status,
+            updated_at: new Date()
+        });
+
+        return;
+    }
+}
+
+// ルーティングのみを行う純粋なルータ
+class Router {
+    constructor() {
+        this.routes = {};
+    }
+
+    // path, handler { render { async rendering(params) -> ... , async cleanup() -> ... }, assetPath } -> this
+    registerHandler(path, handler) {
+        this.routes[path] = handler;
+        return this;
+    }
+
+    // ... -> { handler, params }
+    findHandler(path) {
+        for (const [routePath, routeHandler] of Object.entries(this.routes)) {
+            const match = Router.#matchPath(routePath, path);
+            if (match) {
+                return {
+                    handler: routeHandler,
+                    params: match
+                };
+            }
+        }
+    }
+
+    // ... -> { <paramName>: <value>, ... }
+    static #matchPath(pattern, path) {
+        const patternParts = pattern.split('/');
+        const pathParts = path.split('/');
+        if (patternParts.length !== pathParts.length) {
+            return;
+        }
+        const params = {};
+        for (let i = 0; i < patternParts.length; i++) {
+            const patternPart = patternParts[i];
+            const pathPart = pathParts[i];
+            if (patternPart.startsWith(':')) {
+                // パスパラメータ
+                const paramName = patternPart.slice(1);
+                params[paramName] = pathPart;
+            } else if (patternPart !== pathPart) {
+                // 固定パスが一致しない
+                return;
+            }
+        }
+        return params;
+    }
+}
+
+// ナビゲーションを行う
+class Navigator {
+    // notfound_contはRouter.registerRenderの第2,3引数と同じ
+    constructor(container, assetLoader, router, notfound_cont) {
+        this.container = container;
+        this.assetLoader = assetLoader;
+        this.router = router;
+        this.notfound_cont = notfound_cont;
+        this.prevRender = null;
+    }
+
+    async start() {
+        window.addEventListener('popstate', async () => {
+            let path = window.location.pathname;
+            await this.#transition(path);
+        });
+        await this.navigate(window.location.pathname);
+    }
+
+    async navigate(path) {
+        history.pushState(null, '', path);
+        await this.#transition(path);
+    }
+
+    // ... -> { render, handler }
+    static async #transition(prevRender, path) {
+        // reset
+
+        if (prevRender != null && prevRender.cleaner) {
+            await prevRender.cleaner();
+        }
+        this.prevRender = null;
+
+        document.title = "天文部 文化祭 混雑状況管理システム"
+
+        this.container.setContent("");
+        /*
+        ←あんまよくないかもしれない？
+        てかパスの遷移元によっては一部の書き換えだけでいい場合あるし...
+        どうすりゃいいんだこれ
+        それはナビゲータ使わずお前の中でやっとけって話？
+        いや履歴積んだりするし
+
+        状態はクラスでいいが中身の書き換えをどうすればいいものか...
+        前回のページのパスを渡してあげて、引き継ぐかどうかはレンダラに判断させる？
+        てかここで責務負いすぎって可能性もある
+        例えばナビゲータは履歴積むだけつんんでとか？
+        いや　それじゃね...
+        同ページ内遷移は結局どうするの？
+        コンテンツ構造をレンダラにチェックさせるとか？
+        */
+
+        // apply
+
+        let { handler, params } = this.router.findRender(path);
+        if (!handler) {
+            handler = this.notfound_cont.render;
+        }
+
+        if (assetPath) {
+            await this.assetLoader.loadPage2Container(assetPath, [assetPath]);
+        }
+        if (render && render.handler) {
+            await render.handler(params);
+        }
+
+        this.prevRender = render;
+
+        // handlerの中身どうする？
+        // renderer と assetPath か？
+    }
+}
+
+// ハンドラーは別クラス？
+// タイトルとか色々登録するように？
+/*
+- タイトル
+- レンダラ
+- レンダリング対象のhtmlとcss
+ */

@@ -25,7 +25,7 @@ DynamoDB等も選択肢に入れておく
       - ボディ
         - `:room_id`: 教室ID
           - `name`: 教室名
-          - `description`: 教室の説明
+          - `desc`: 教室の説明
           - `floor`: 教室の階数
 - `/crowd`: 混雑状況
   - GET : 全教室の混雑状況を取得
