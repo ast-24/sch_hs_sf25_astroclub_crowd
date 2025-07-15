@@ -1,3 +1,3 @@
-#!/bin/zsh
+#!/bin/bash
 
 ./repl-ph.sh

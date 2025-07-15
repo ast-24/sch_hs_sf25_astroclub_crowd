@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 SRF_ORIGIN="${X_PH_ORIGIN_SRF}"
 ASS_ORIGIN="${X_PH_ORIGIN_ASS}"
