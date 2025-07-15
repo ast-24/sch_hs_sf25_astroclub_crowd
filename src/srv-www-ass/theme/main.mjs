@@ -103,7 +103,7 @@ class BackgroundStarRenderer {
             x: Math.random() * canvas_size.width,
             y: Math.random() * canvas_size.height,
             radius: Math.random() * 0.5 + 0.5,
-            opacity: Math.random() * 0.5 + 0.2,
+            opacity: Math.random() * 0.5 + 0.3,
             r: 255,
             g: 255,
             b: 255,

@@ -83,18 +83,19 @@ class EnterHandler extends HandlerInterface {
                 console.error('教室情報の取得に失敗しました:', error);
                 if (i === 2) {
                     // 3回目の失敗ならエラー画面へ遷移
-                    await this.#entities.navigator.navigateToSpecial('error');
+                    await this.#entities.navigator.navigateSpecial('error');
                     return;
                 }
             }
         }
 
         if (!rooms.has(this.#roomId)) {
-            await this.#entities.navigator.navigateToSpecial('notfound');
+            // >! ここNotfoundページではなくNotfoundってメッセージ出したうえでの/enterへの遷移では？
+            await this.#entities.navigator.navigateSpecial('notfound');
             return;
         }
 
-        this.#entities.pageContainerRef.dom.querySelector('.main_content .status_buttons .room_info .room_name #roomName').textContent
+        this.#entities.pageContainerRef.dom.querySelector('.main_content .room_info .room_name #roomName').textContent
             = rooms.get(this.#roomId).name;
 
         this.#setupEventListeners();
@@ -113,8 +114,8 @@ class EnterHandler extends HandlerInterface {
     async #statusUpdateHandler(status) {
         const isMobile = this.#entities.deviceDetector.isMobile();
 
-        const statusButtons = this.#entities.pageContainerRef.dom.querySelector('.main_content .status_buttons');
-        const messageOverlay = this.#entities.pageContainerRef.dom.querySelector('.main_content .message_overlay');
+        const statusButtons = this.#entities.pageContainerRef.dom.querySelector('.main_content .buttons_area .select_area');
+        const messageOverlay = this.#entities.pageContainerRef.dom.querySelector('.main_content .buttons_area .message_overlay');
         const messageField = messageOverlay.querySelector('.message_overlay_frame .message_overlay_message');
 
         messageField.style.color = '#4fc3f7';

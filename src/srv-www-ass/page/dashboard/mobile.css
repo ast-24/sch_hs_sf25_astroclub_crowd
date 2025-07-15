@@ -3,11 +3,11 @@
 
     .data_state_area {
         margin: 2vh 1vw auto auto;
-        padding: 0.5vh 0.5vw;
+        padding: 0.5vh 1vw;
 
         width: fit-content;
 
-        background-color: #ffffff10;
+        background-color: #ffffff20;
         border-radius: 1vh;
 
         .last_updated {
@@ -21,6 +21,8 @@
         margin: 2vh 1vw;
 
         border-radius: 1vh;
+        box-shadow: 0.5vw 1vh 2vw #000c,
+            -0.25vw -0.4vh 0.5vw #0004;
 
         .data_table {
             width: 100%;
@@ -32,7 +34,7 @@
             overflow: hidden;
 
             th {
-                background-color: #ffffff20;
+                background-color: #ffffff30;
                 border-bottom: 3px solid #b3e0ff50;
                 color: #b3e0ff;
                 font-weight: bold;
@@ -113,27 +115,27 @@
                 transition: background 0.2s;
 
                 &.crowd-status-1 {
-                    background-color: #2196f320;
+                    background-color: #2196f330;
                     /* 空いています: 青系 */
                 }
 
                 &.crowd-status-2 {
-                    background-color: #4caf5020;
+                    background-color: #4caf5030;
                     /* 少し混雑: 緑系 */
                 }
 
                 &.crowd-status-3 {
-                    background-color: #fff17620;
+                    background-color: #fff17630;
                     /* 中程度: 黄系 */
                 }
 
                 &.crowd-status-4 {
-                    background-color: #ff980020;
+                    background-color: #ff980030;
                     /* かなり混雑: オレンジ系 */
                 }
 
                 &.crowd-status-5 {
-                    background-color: #e5393520;
+                    background-color: #e5393530;
                     /* 満員: 赤系 */
                 }
             }

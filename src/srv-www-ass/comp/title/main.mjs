@@ -17,7 +17,7 @@ export class TitleComponent {
         let css, html;
         for (let i = 0; i < 3; i++) {
             try {
-                ([css, html]) = await Promise.all([
+                [css, html] = await Promise.all([
                     this.#resourceLoader.fetchTemplateWithDevice('comp/title', 'css'),
                     this.#resourceLoader.fetchTemplate('comp/title/main.html')
                 ]);

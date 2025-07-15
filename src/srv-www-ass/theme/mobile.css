@@ -44,13 +44,11 @@ html {
                         position: relative;
 
                         min-height: 98vh;
-                        background-color: #ffffff20;
+                        background-color: #ffffff10;
                         border-radius: 2vh;
                         padding: 1vh 1vw;
 
-                        box-shadow: 0 0 1vw #000f,
-                            0 0 1vw #000f,
-                            0 0 1vw #000f;
+                        box-shadow: 0 0 1vw #000f;
                     }
                 }
             }

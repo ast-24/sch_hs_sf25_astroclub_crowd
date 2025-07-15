@@ -1,38 +1,39 @@
 <div class="title_area"></div>
 <div class="main_content">
-    <div class="status_buttons">
-        <div class="room_info">
-            <div class="room_name">[入力対象教室]<br><span id="roomName"></span></div>
+    <div class="room_info">
+        <div class="room_name">[入力対象教室]<br><span id="roomName"></span></div>
+    </div>
+    <div class="buttons_area">
+        <div class="select_area">
+            <div class="enter_message">
+                <div class="message">混雑状況の選択をお願いします</div>
+            </div>
+            <div class="button_grid">
+                <button class="status_btn status_btn_1" data-status="1">
+                    <span class="status_icon">😊</span>
+                    <span class="status_text">空いています</span>
+                </button>
+                <button class="status_btn status_btn_2" data-status="2">
+                    <span class="status_icon">🙂</span>
+                    <span class="status_text">少し混雑しています</span>
+                </button>
+                <button class="status_btn status_btn_3" data-status="3">
+                    <span class="status_icon">😐</span>
+                    <span class="status_text">中程度の混雑です</span>
+                </button>
+                <button class="status_btn status_btn_4" data-status="4">
+                    <span class="status_icon">😓</span>
+                    <span class="status_text">かなり混雑しています</span>
+                </button>
+                <button class="status_btn status_btn_5" data-status="5">
+                    <span class="status_icon">😵</span>
+                    <span class="status_text">満員です</span>
+                </button>
+            </div>
         </div>
-        <div class="enter_message">
-            <div class="message">混雑状況の選択をお願いします</div>
-        </div>
-        <div class="button_grid">
-            <button class="status_btn status_btn_1" data-status="1">
-                <span class="status_icon">😊</span>
-                <span class="status_text">空いています</span>
-            </button>
-            <button class="status_btn status_btn_2" data-status="2">
-                <span class="status_icon">🙂</span>
-                <span class="status_text">少し混雑しています</span>
-            </button>
-            <button class="status_btn status_btn_3" data-status="3">
-                <span class="status_icon">😐</span>
-                <span class="status_text">中程度の混雑です</span>
-            </button>
-            <button class="status_btn status_btn_4" data-status="4">
-                <span class="status_icon">😓</span>
-                <span class="status_text">かなり混雑しています</span>
-            </button>
-            <button class="status_btn status_btn_5" data-status="5">
-                <span class="status_icon">😵</span>
-                <span class="status_text">満員です</span>
-            </button>
+        <div class="message_overlay">
+            <div class="message_overlay_frame">
+                <div class="message_overlay_message"></div>
+            </div>
         </div>
     </div>
-    <div class="message_overlay">
-        <div class="message_overlay_frame">
-            <div class="message_overlay_message"></div>
-        </div>
-    </div>
-</div>
