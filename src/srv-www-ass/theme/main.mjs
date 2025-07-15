@@ -1,9 +1,21 @@
 /** 共通テーマのレンダラ */
 export async function themeRenderer(appContainer, resourceLoader, deviceDetector) {
-    let [css, html] = await Promise.all([
-        resourceLoader.fetchTemplateWithDevice('theme', 'css'),
-        resourceLoader.fetchTemplate('theme/main.html')
-    ]);
+    let css, html;
+    for (let i = 0; i < 3; i++) {
+        try {
+            [css, html] = await Promise.all([
+                resourceLoader.fetchTemplateWithDevice('theme', 'css'),
+                resourceLoader.fetchTemplate('theme/main.html')
+            ]);
+            break; // 成功したらループを抜ける
+        } catch (error) {
+            console.error(`Error loading theme resources (attempt ${i + 1}/3): ${error}`);
+            if (i === 2) {
+                // 3回失敗したらエラーを投げる
+                throw new Error(`Failed to load theme resources after 3 attempts: ${error}`);
+            }
+        }
+    }
     appContainer.innerHTML = `<style>${css}</style>${html}`;
 
     const canvas = appContainer.querySelector('.rendering_space .layer_back .star');

@@ -42,11 +42,23 @@ class EnterHandler extends HandlerInterface {
     }
 
     async renderingFull() {
-        await this.#entities.resourceLoader.loadPageWithDevice(
-            this.#entities.pageContainerRef.dom,
-            'page/enter',
-            'page/enter'
-        );
+
+        for (let i = 0; i < 3; i++) {
+            try {
+                await this.#entities.resourceLoader.loadPageWithDevice(
+                    this.#entities.pageContainerRef.dom,
+                    'page/enter',
+                    'page/enter'
+                );
+                break; // 成功したらループを抜ける
+            } catch (error) {
+                console.error(`Error loading enter page (attempt ${i + 1}/3): ${error}`);
+                if (i === 2) {
+                    // 3回失敗したらエラーを投げる
+                    throw new Error(`Failed to load enter page after 3 attempts: ${error}`);
+                }
+            }
+        }
 
         this.#titleComponent = new TitleComponent(
             this.#entities.resourceLoader,

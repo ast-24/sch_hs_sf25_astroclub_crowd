@@ -177,7 +177,7 @@ export class SpaCore {
 
         // アプリケーションリサイズハンドラとページリサイズハンドラを設定
         if (this.#config.themeRendererOnResize) {
-            this.#core.deviceDetector.setAppResizeHandler(async () => {
+            this.#core.deviceDetector.setAppResizeHandler(this.#navigation.navigator, async () => {
                 try {
                     const result = await this.#config.themeRendererOnResize(
                         this.#containers.main,
@@ -189,15 +189,27 @@ export class SpaCore {
                     this.#containers.pageRef.dom = result.pageContainer;
                 } catch (error) {
                     console.error('Theme renderer on resize failed:', error);
+                    throw error;
                 }
             });
         }
 
-        this.#core.deviceDetector.setPageResizeHandler(async () => {
-            await this.#navigation.navigator.handlePageResize();
+        this.#core.deviceDetector.setPageResizeHandler(this.#navigation.navigator, async () => {
+            try {
+                await this.#navigation.navigator.handlePageResize();
+            } catch (error) {
+                console.error('Error occurred while handling page resize:', error);
+                throw error;
+            }
         });
 
-        await this.#navigation.navigator.start();
+        try {
+            await this.#navigation.navigator.start();
+        } catch (error) {
+            console.error('Error occurred while starting navigation:', error);
+            this.#containers.main.innerHTML = '<h1 style="color: red;">Critical Error</h1>';
+            throw error;
+        }
     }
 
     /** 起動状態を取得
@@ -268,27 +280,30 @@ export class DeviceDetector {
     }
 
     /** アプリケーションリサイズハンドラを設定
+     * @param {Navigator} navigator - ナビゲータインスタンス
      * @param {Function} handler - アプリケーションリサイズハンドラ
      */
-    setAppResizeHandler(handler) {
+    setAppResizeHandler(navigator, handler) {
         this.#appResizeHandler = handler;
-        this.#startWatchingIfNeeded();
+        this.#startWatchingIfNeeded(navigator);
     }
 
     /** ページリサイズハンドラを設定
+     * @param {Navigator} navigator - ナビゲータインスタンス
      * @param {Function} handler - ページリサイズハンドラ
      */
-    setPageResizeHandler(handler) {
+    setPageResizeHandler(navigator, handler) {
         this.#pageResizeHandler = handler;
-        this.#startWatchingIfNeeded();
+        this.#startWatchingIfNeeded(navigator);
     }
 
     /** 必要に応じてリサイズ監視を開始
+     * @param {Navigator} navigator - ナビゲータインスタンス
      * @param {number} [debounceMs=250] - デバウンス時間
      */
-    #startWatchingIfNeeded(debounceMs = 250) {
+    #startWatchingIfNeeded(navigator, debounceMs = 250) {
         if (!this.#isWatching && this.#hasAnyHandler()) {
-            this.#startWatching(debounceMs);
+            this.#startWatching(navigator, debounceMs);
         }
     }
 
@@ -307,9 +322,10 @@ export class DeviceDetector {
     }
 
     /** リサイズ監視を開始
+     * @param {Navigator} navigator - ナビゲータインスタンス
      * @param {number} debounceMs - デバウンス時間
      */
-    #startWatching(debounceMs) {
+    #startWatching(navigator, debounceMs) {
         this.#isWatching = true;
 
         const debouncedHandler = () => {
@@ -318,29 +334,36 @@ export class DeviceDetector {
             }
 
             this.#debounceTimer = setTimeout(async () => {
-                const oldIsMobile = this.#cachedIsMobile;
-                this.#updateCache();
-                const newIsMobile = this.#cachedIsMobile;
+                try {
+                    const oldIsMobile = this.#cachedIsMobile;
+                    this.#updateCache();
+                    const newIsMobile = this.#cachedIsMobile;
 
-                // 縦横の向きが変わった場合のみハンドラを呼び出し
-                if (oldIsMobile !== newIsMobile) {
-                    // アプリケーションリサイズハンドラを実行
-                    if (this.#appResizeHandler) {
-                        try {
-                            await this.#appResizeHandler();
-                        } catch (error) {
-                            console.error('App resize handler error:', error);
+                    // 縦横の向きが変わった場合のみハンドラを呼び出し
+                    if (oldIsMobile !== newIsMobile) {
+                        // アプリケーションリサイズハンドラを実行
+                        if (this.#appResizeHandler) {
+                            try {
+                                await this.#appResizeHandler();
+                            } catch (error) {
+                                console.error('App resize handler error:', error);
+                                throw error;
+                            }
+                        }
+
+                        // ページリサイズハンドラを実行
+                        if (this.#pageResizeHandler) {
+                            try {
+                                await this.#pageResizeHandler();
+                            } catch (error) {
+                                console.error('Page resize handler error:', error);
+                                throw error;
+                            }
                         }
                     }
-
-                    // ページリサイズハンドラを実行
-                    if (this.#pageResizeHandler) {
-                        try {
-                            await this.#pageResizeHandler();
-                        } catch (error) {
-                            console.error('Page resize handler error:', error);
-                        }
-                    }
+                } catch (error) {
+                    console.error('Resize handler error:', error);
+                    await navigator.navigateSpecial('error');
                 }
             }, debounceMs);
         };
@@ -1030,6 +1053,7 @@ export class Navigator {
                 await this.#state.prevHandler.onDeviceOrientationChange();
             } catch (error) {
                 console.error('Device orientation change handler error:', error);
+                throw error;
             }
         }
     }
@@ -1042,7 +1066,7 @@ export class Navigator {
             const path = window.location.pathname;
             await this.#performTransitionWithErrorHandling(path);
         });
-        await this.navigate(window.location.pathname);
+        await this.#performTransitionWithErrorHandling(window.location.pathname);
     }
 
     /** 指定されたパスに遷移
@@ -1334,7 +1358,17 @@ export class Navigator {
         // HTML読み込み
         const htmlResourcePath = await nextHandler?.getHtmlResourcePath?.();
         if (htmlResourcePath) {
-            await this.#core.resourceLoader.loadHtml(this.#containers.pageRef.dom, htmlResourcePath);
+            for (let i = 0; i < 3; i++) {
+                try {
+                    await this.#core.resourceLoader.loadHtml(this.#containers.pageRef.dom, htmlResourcePath);
+                    break; // 成功したらループを抜ける
+                } catch (error) {
+                    console.error(`HTML load attempt ${i + 1} failed:`, error);
+                    if (i === 2) {
+                        throw new Error(`Failed to load HTML after 3 attempts: ${htmlResourcePath}`);
+                    }
+                }
+            }
         } else {
             this.#containers.pageRef.dom.innerHTML = '';
         }
@@ -1369,6 +1403,8 @@ export class Navigator {
                 console.error('Special page transition failed:', error);
                 await this.#performSpecialTransition('error');
             } else {
+                console.error('Critical error occurred:', error);
+                this.#containers.pageRef.dom.innerHTML = '<h1 style="color: red;">Critical Error</h1>';
                 throw error;
             }
         }

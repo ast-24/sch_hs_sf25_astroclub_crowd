@@ -38,11 +38,23 @@ class DashboardHandler extends HandlerInterface {
     }
 
     async renderingFull() {
-        await this.#entities.resourceLoader.loadPageWithDevice(
-            this.#entities.pageContainerRef.dom,
-            'page/dashboard',
-            'page/dashboard'
-        );
+
+        for (let i = 0; i < 3; i++) {
+            try {
+                await this.#entities.resourceLoader.loadPageWithDevice(
+                    this.#entities.pageContainerRef.dom,
+                    'page/dashboard',
+                    'page/dashboard'
+                );
+                break; // 成功したらループを抜ける
+            } catch (error) {
+                console.error(`Error loading dashboard page (attempt ${i + 1}/3): ${error}`);
+                if (i === 2) {
+                    // 3回失敗したらエラーを投げる
+                    throw new Error(`Failed to load dashboard page after 3 attempts: ${error}`);
+                }
+            }
+        }
 
         this.#titleComponent = new TitleComponent(
             this.#entities.resourceLoader,
@@ -72,10 +84,22 @@ class DashboardHandler extends HandlerInterface {
             .textContent
             = new Date().toLocaleTimeString();
 
-        const [rooms_info, crowd_info] = await Promise.all([
-            this.#apiClient.getRooms(),
-            this.#apiClient.getCrowdStatus()
-        ]);
+        let rooms_info, crowd_info;
+        for (let i = 0; i < 3; i++) {
+            try {
+                [rooms_info, crowd_info] = await Promise.all([
+                    this.#apiClient.getRooms(),
+                    this.#apiClient.getCrowdStatus()
+                ]);
+                break; // 成功したらループを抜ける
+            } catch (error) {
+                console.error(`Error fetching dashboard data (attempt ${i + 1}/3): ${error}`);
+                if (i === 2) {
+                    // 3回失敗したらエラーを投げる
+                    throw new Error(`Failed to fetch dashboard data after 3 attempts: ${error}`);
+                }
+            }
+        }
 
         // sort_priorityで昇順ソート
         const rooms = Array.from(rooms_info.entries())

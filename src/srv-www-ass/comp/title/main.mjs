@@ -14,10 +14,21 @@ export class TitleComponent {
             this.#title = title;
         }
 
-        const [css, html] = await Promise.all([
-            this.#resourceLoader.fetchTemplateWithDevice('comp/title', 'css'),
-            this.#resourceLoader.fetchTemplate('comp/title/main.html')
-        ]);
+        let css, html;
+        for (let i = 0; i < 3; i++) {
+            try {
+                ([css, html]) = await Promise.all([
+                    this.#resourceLoader.fetchTemplateWithDevice('comp/title', 'css'),
+                    this.#resourceLoader.fetchTemplate('comp/title/main.html')
+                ]);
+                break; // 成功したらループを抜ける
+            } catch (error) {
+                console.error(`Error fetching title component resources: ${error}`);
+                if (i === 2) {
+                    throw new Error('Failed to load title component resources after 3 attempts');
+                }
+            }
+        }
 
         const innerContainer = document.createElement('div');
         innerContainer.innerHTML = `<style>${css}</style>${html}`;
