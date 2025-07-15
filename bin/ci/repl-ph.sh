@@ -23,7 +23,7 @@ for ext in "${TARGET_EXTENSIONS[@]}"; do
 
     FIND_PRUNE=""
     for exdir in "${EXCLUDE_DIRS[@]}"; do
-        FIND_PRUNE+="-type d -name '$exdir' -prune -o "
+        FIND_PRUNE+="-path '*/$exdir/*' -prune -o "
     done
     FIND_PRUNE+="-type d -name '.*' -prune -o "
 

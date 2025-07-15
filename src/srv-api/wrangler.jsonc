@@ -15,6 +15,12 @@
 			"binding": "db_mini",
 			"id": "b8fab5aa270f4f0aa489b460fbb661a1"
 		}
+	],
+	"routes": [
+		{
+			"pattern": "api-astrocrowd.ast24.dev",
+			"custom_domain": true
+		}
 	]
 	/**
 	 * Smart Placement
