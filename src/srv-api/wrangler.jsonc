@@ -12,8 +12,8 @@
 	},
 	"kv_namespaces": [
 		{
-			"binding": "astroclub_sf25_db_minidata",
-			"id": "3defde07c71f4bde90cb0ca63ab19b34"
+			"binding": "db_mini",
+			"id": "b8fab5aa270f4f0aa489b460fbb661a1"
 		}
 	]
 	/**

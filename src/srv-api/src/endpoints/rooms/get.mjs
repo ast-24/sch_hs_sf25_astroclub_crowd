@@ -13,10 +13,10 @@ export async function handler_rooms_get(request, env, ctx) {
             という形式になっている
             ※設定はAPI経由ではなく管理者がCloudflare Workers KVのコンソールから行う
         */
-        if (!env.astroclub_sf25_db_minidata) {
+        if (!env.db_mini) {
             return new Response('KV binding not found', { status: 500 });
         }
-        let rooms_data = await env.astroclub_sf25_db_minidata.get('rooms');
+        let rooms_data = await env.db_mini.get('rooms');
         if (!rooms_data) {
             return new Response('No rooms data found', { status: 404 });
         }
