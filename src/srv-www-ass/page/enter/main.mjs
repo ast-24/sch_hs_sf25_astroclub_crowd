@@ -90,7 +90,7 @@ class EnterHandler extends HandlerInterface {
         }
 
         if (!rooms.has(this.#roomId)) {
-            // >! ここNotfoundページではなくNotfoundってメッセージ出したうえでの/enterへの遷移では？
+            // URL直打しない限りこうならないためエラーでいい
             await this.#entities.navigator.navigateSpecial('notfound');
             return;
         }

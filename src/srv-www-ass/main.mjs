@@ -29,6 +29,14 @@ const appClient =
 async function routeConfigurer(router) {
     router
         .registerHandlerFactory(
+            '',
+            new HandlerFactoryInterfaceImpl(
+                async (entities, context) => {
+                    const { IndexHandlerCreator } = await import('./page/index/main.mjs');
+                    return await IndexHandlerCreator(entities, appClient);
+                })
+        )
+        .registerHandlerFactory(
             'dashboard',
             new HandlerFactoryInterfaceImpl(
                 async (entities, context) => {
@@ -48,5 +56,3 @@ async function routeConfigurer(router) {
 }
 
 run();
-
-// >!全体的に影付けて立体的に

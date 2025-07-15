@@ -1,0 +1,149 @@
+#page_container {
+    position: relative;
+
+    .main_content {
+        display: block;
+        margin: 2vh 2vw 0 2vw;
+        padding: 3vh 0;
+
+        .navigation_area {
+            display: flex;
+            gap: 2vw;
+            min-height: 60vh;
+
+            .dashboard_section,
+            .enter_section {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .section_title {
+                margin: 0 auto 2vh auto;
+                padding: 1vh 2vw;
+                width: fit-content;
+
+                background-color: #ffffff28;
+                border-radius: 1vh;
+
+                text-align: center;
+                font-size: 3vh;
+                color: #b3e0ff;
+                font-weight: bold;
+            }
+
+            .dashboard_section {
+                .dashboard_btn {
+                    background-color: #2196f340;
+                    border-radius: 1.5vh;
+                    padding: 3vh 2vw;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    color: #b3e0ff;
+                    text-align: center;
+                    box-shadow: 0.4vw 0.8vh 1.2vw #000c,
+                        -0.2vw -0.32vh 0.4vw #0008;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 1.5vh;
+
+                    &:hover {
+                        background-color: #2196f360;
+                        box-shadow: inset 0.4vw 0.8vh 0.6vw #000c,
+                            inset -0.2vw -0.32vh 0.4vw #0008;
+                    }
+
+                    .btn_icon {
+                        font-size: 6vh;
+                    }
+
+                    .btn_text {
+                        font-size: 3.5vh;
+                        font-weight: bold;
+                        color: #4fc3f7;
+                    }
+
+                    .btn_description {
+                        font-size: 2.2vh;
+                        color: #b3e0ff;
+                        opacity: 0.9;
+                    }
+                }
+            }
+
+            .enter_section {
+                .room_grid {
+                    display: grid;
+                    gap: 1vh;
+                    height: 100%;
+                    padding: 1vh;
+                    border: 0.5vh solid #ffffff28;
+                    border-radius: 1vh;
+
+                    .room_btn {
+                        background-color: #1976d240;
+                        border-radius: 1vh;
+                        padding: 2vh 1vw;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        color: #b3e0ff;
+                        text-align: center;
+                        box-shadow: 0.3vw 0.6vh 0.9vw #000a,
+                            -0.15vw -0.24vh 0.3vw #0006;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 1vh;
+                        min-height: 12vh;
+
+                        &:hover {
+                            background-color: #1976d260;
+                            box-shadow: inset 0.3vw 0.6vh 0.5vw #000a,
+                                inset -0.15vw -0.24vh 0.3vw #0006;
+                        }
+
+                        .room_icon {
+                            font-size: 4vh;
+                        }
+
+                        .room_text {
+                            font-size: 2.5vh;
+                            font-weight: bold;
+                            color: #4fc3f7;
+                            line-height: 1.2;
+                        }
+
+                        .room_desc {
+                            font-size: 1.8vh;
+                            color: #b3e0ff;
+                            opacity: 0.8;
+                            line-height: 1.1;
+                        }
+                    }
+
+                }
+
+                .room_grid.grid-cols-1 {
+                    grid-template-columns: repeat(1, 1fr);
+                }
+
+                .room_grid.grid-cols-2 {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .room_grid.grid-cols-3 {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+
+                .room_grid.grid-cols-4 {
+                    grid-template-columns: repeat(4, 1fr);
+                }
+            }
+
+        }
+    }
+}
