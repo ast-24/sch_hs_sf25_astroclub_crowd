@@ -6,6 +6,8 @@ API_ORIGIN="${X_PH_ORIGIN_API}"
 
 TARGET_EXTENSIONS=("html" "css" "mjs" "js")
 
+EXCLUDE_DIRS=("node_modules")
+
 CURRENT_DIR=$(pwd)
 
 echo "Starting placeholder replacement in: $CURRENT_DIR"
@@ -19,7 +21,13 @@ processed_count=0
 for ext in "${TARGET_EXTENSIONS[@]}"; do
     echo "Processing .$ext files..."
 
-    find "$CURRENT_DIR" -type d -name '.*' -prune -o -type f -name "*.$ext" -not -name '.*' -print | while read -r file; do
+    FIND_PRUNE=""
+    for exdir in "${EXCLUDE_DIRS[@]}"; do
+        FIND_PRUNE+="-type d -name '$exdir' -prune -o "
+    done
+    FIND_PRUNE+="-type d -name '.*' -prune -o "
+
+    eval "find \"$CURRENT_DIR\" $FIND_PRUNE -type f -name '*.$ext' -not -name '.*' -print" | while read -r file; do
         echo "  Processing: $file"
 
         if grep -q "{{SRF_ORIGIN}}\|{{ASS_ORIGIN}}\|{{API_ORIGIN}}" "$file"; then
