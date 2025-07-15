@@ -12,19 +12,20 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
 const ASS_DIR = resolve(currentDir, '../../src/srv-www-ass');
 const SRF_DIR = resolve(currentDir, '../../src/srv-www-srf');
 
-const getLocalIP = () => {
+const getAllIPs = () => {
+    const ips = ['localhost'];
     const interfaces = networkInterfaces();
     for (const name of Object.keys(interfaces)) {
         for (const iface of interfaces[name]) {
             if (iface.family === 'IPv4' && !iface.internal) {
-                return iface.address;
+                ips.push(iface.address);
             }
         }
     }
-    return 'localhost';
+    return ips;
 };
 
-const HOST = getLocalIP();
+const IPS = getAllIPs();
 
 const mimeTypes = {
     '.html': 'text/html',
@@ -38,7 +39,7 @@ const mimeTypes = {
     '.ico': 'image/x-icon'
 };
 
-const serveFile = async (filePath, res) => {
+const serveFile = async (filePath, res, origin) => {
     const ext = extname(filePath);
     const type = mimeTypes[ext] || 'application/octet-stream';
 
@@ -47,8 +48,8 @@ const serveFile = async (filePath, res) => {
             let data = await readFileAsync(filePath, 'utf8');
             const fileDir = dirname(filePath).replace(/\\/g, '/');
             data = data
-                .replace(/\{\{ASS_ORIGIN\}\}/g, `http://${HOST}:${PORT}`)
-                .replace(/\{\{SRF_ORIGIN\}\}/g, `http://${HOST}:${PORT}`)
+                .replace(/\{\{ASS_ORIGIN\}\}/g, origin)
+                .replace(/\{\{SRF_ORIGIN\}\}/g, origin)
                 .replace(/\{\{API_ORIGIN\}\}/g, '')
                 .replace(/\{\{REL_DIR\}\}/g, fileDir);
             res.writeHead(200, { 'Content-Type': type });
@@ -79,11 +80,18 @@ const server = http.createServer(async (req, res) => {
         }
     }
 
-    await serveFile(filePath, res);
+    // リクエストからオリジンを抽出
+    const origin = req.headers.origin || `http://${req.headers.host}`;
+
+    await serveFile(filePath, res, origin);
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`SPA server running at:`);
     console.log(`  Local:   http://localhost:${PORT}`);
-    console.log(`  Network: http://${HOST}:${PORT}`);
+    for (const ip of IPS) {
+        if (ip !== 'localhost') {
+            console.log(`  Network: http://${ip}:${PORT}`);
+        }
+    }
 });
