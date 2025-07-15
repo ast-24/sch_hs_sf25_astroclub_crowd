@@ -10,6 +10,7 @@ router.get('/rooms', handler_rooms_get);
 router.get('/crowd', handler_crowd_get);
 router.get('/crowd/:room_id', handler_crowd_with_roomid_get);
 router.put('/crowd/:room_id', handler_crowd_with_roomid_put);
+router.options('*', () => new Response(null, { status: 204 }));
 
 export default {
 	async fetch(request, env, ctx) {
