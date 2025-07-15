@@ -19,7 +19,7 @@ processed_count=0
 for ext in "${TARGET_EXTENSIONS[@]}"; do
     echo "Processing .$ext files..."
 
-    find "$CURRENT_DIR" -name "*.$ext" -type f | while read -r file; do
+    find "$CURRENT_DIR" -type d -name '.*' -prune -o -type f -name "*.$ext" -not -name '.*' -print | while read -r file; do
         echo "  Processing: $file"
 
         if grep -q "{{SRF_ORIGIN}}\|{{ASS_ORIGIN}}\|{{API_ORIGIN}}" "$file"; then

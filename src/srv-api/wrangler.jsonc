@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "astroclub-sf25-api",
+	"name": "sch-hs-sf25-astroclub-crowd-api",
 	"main": "src/index.mjs",
 	"compatibility_date": "2025-07-10",
 	"observability": {
