@@ -1,3 +1,4 @@
 #!/bin/bash
 
-./repl-ph.sh
+SCRIPT_DIR="$(dirname "$0")"
+"$SCRIPT_DIR/repl-ph.sh"
