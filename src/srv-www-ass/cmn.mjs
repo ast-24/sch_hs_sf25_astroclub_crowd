@@ -157,12 +157,12 @@ export class ApiClientStub {
         this.apiBaseUrl = apiBaseUrl;// 使わない
 
         this.mockRooms = new Map([
-            ['darkroom', { name: '暗室', desc: 'プラネタリウム', floor: 3, sort_priority: 4 }],
-            ['earth-lab', { name: '地学実験室', desc: '展示(岩石班)', floor: 3, sort_priority: 2 }],
-            ['physics-lab', { name: '物理実験室', desc: '展示(附属中)', floor: 3, sort_priority: 3 }],
-            ['s33', { name: 'S33', desc: '受付', floor: 3, sort_priority: 6 }],
-            ['info-room3', { name: '情報教室3', desc: 'Mitaka/ミニ講義', floor: 2, sort_priority: 5 }],
-            ['dome', { name: 'ドーム', desc: '天体望遠鏡', floor: 4, sort_priority: 1 }]
+            ['darkroom', { name: '暗室', desc: 'プラネタリウム', floor: "3", sort_priority: 4 }],
+            ['earth-lab', { name: '地学実験室', desc: '展示(岩石班)', floor: "3", sort_priority: 2 }],
+            ['physics-lab', { name: '物理実験室', desc: '展示(附属中)', floor: "3", sort_priority: 3 }],
+            ['s33', { name: 'S33', desc: '受付', floor: "3", sort_priority: 6 }],
+            ['info-room3', { name: '情報教室3', desc: 'Mitaka/ミニ講義', floor: "2", sort_priority: 5 }],
+            ['dome', { name: 'ドーム', desc: '天体望遠鏡', floor: "R", sort_priority: 1 }]
         ]);
 
         this.mockCrowdData = new Map([
