@@ -51,8 +51,23 @@ async function routeConfigurer(router) {
                     const { EnterHandlerCreator } = await import('./page/enter/main.mjs');
                     return await EnterHandlerCreator(entities, appClient, context);
                 })
+        )
+        .registerSpecialRoute(
+            'error',
+            new HandlerFactoryInterfaceImpl(
+                async (entities, context) => {
+                    const { ErrorHandlerCreator } = await import('./page/error/main.mjs');
+                    return await ErrorHandlerCreator(entities);
+                })
+        )
+        .registerSpecialRoute(
+            'notfound',
+            new HandlerFactoryInterfaceImpl(
+                async (entities, context) => {
+                    const { NotFoundHandlerCreator } = await import('./page/notfound/main.mjs');
+                    return await NotFoundHandlerCreator(entities);
+                })
         );
-    // >! error / notfound
 }
 
 run();
