@@ -27,6 +27,7 @@ DynamoDB等も選択肢に入れておく
           - `name`: 教室名
           - `desc`: 教室の説明
           - `floor`: 教室の階数
+          - `sort_priority`: ソート優先度
 - `/crowd`: 混雑状況
   - GET : 全教室の混雑状況を取得
     - レスポンス

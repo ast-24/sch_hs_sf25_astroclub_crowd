@@ -2,31 +2,37 @@
     "darkroom": {
         "name": "暗室",
         "desc": "プラネタリウム",
-        "floor": 3
+        "floor": 3,
+        "sort_priority": 5
     },
     "earth-lab": {
         "name": "地学実験室",
         "desc": "展示(岩石班)",
-        "floor": 3
+        "floor": 3,
+        "sort_priority": 2
     },
     "physics-lab": {
         "name": "物理実験室",
         "desc": "展示(附属中)",
-        "floor": 3
+        "floor": 3,
+        "sort_priority": 3
     },
     "s33": {
         "name": "S33",
         "desc": "受付",
-        "floor": 3
+        "floor": 3,
+        "sort_priority": 1
     },
     "info-room3": {
         "name": "情報教室3",
         "desc": "Mitaka/ミニ講義",
-        "floor": 2
+        "floor": 2,
+        "sort_priority": 6
     },
     "dome": {
         "name": "RF ドーム",
         "desc": "天体望遠鏡",
-        "floor": 4
+        "floor": 4,
+        "sort_priority": 4
     }
 }

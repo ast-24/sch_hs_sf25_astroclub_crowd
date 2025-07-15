@@ -5,11 +5,145 @@ export class ApiClient {
      */
     apiBaseUrl;
 
+    /** キャッシュ用のマップ */
+    #roomsCache = null;
+
     constructor(apiBaseUrl) {
         this.apiBaseUrl = apiBaseUrl;
     }
 
-    // その他処理
+    /**
+     * 教室一覧を取得
+     * @returns {Promise<Map>} 教室データのMap
+     */
+    async getRooms() {
+        // 永続キャッシュ - 一度取得したら再取得しない
+        if (this.#roomsCache) {
+            return this.#roomsCache;
+        }
+
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/rooms`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // データをMapに変換
+            const roomsMap = new Map();
+            for (const [roomId, roomData] of Object.entries(data)) {
+                roomsMap.set(roomId, roomData);
+            }
+
+            // キャッシュに保存
+            this.#roomsCache = roomsMap;
+
+            return roomsMap;
+        } catch (error) {
+            console.error('教室データの取得に失敗:', error);
+            throw new Error('教室データの取得に失敗しました');
+        }
+    }
+
+    /**
+     * 全教室の混雑状況を取得
+     * @returns {Promise<Map>} 混雑状況データのMap
+     */
+    async getCrowdStatus() {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/crowd`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // データをMapに変換（updated_atをDateオブジェクトに変換）
+            const crowdMap = new Map();
+            for (const [roomId, crowdData] of Object.entries(data)) {
+                crowdMap.set(roomId, {
+                    status: crowdData.status,
+                    updated_at: new Date(crowdData.updated_at)
+                });
+            }
+
+            return crowdMap;
+        } catch (error) {
+            console.error('混雑状況データの取得に失敗:', error);
+            throw new Error('混雑状況データの取得に失敗しました');
+        }
+    }
+
+    /**
+     * 特定教室の混雑状況を取得
+     * @param {string} roomid 教室ID
+     * @returns {Promise<{status: number, updated_at: Date}>} 混雑状況データ
+     */
+    async getCrowdStatusRoom(roomid) {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/crowd/${encodeURIComponent(roomid)}`);
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error(`教室 ${roomid} が見つかりません`);
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // updated_atをDateオブジェクトに変換
+            const roomData = {
+                status: data.status,
+                updated_at: new Date(data.updated_at)
+            };
+
+            return roomData;
+        } catch (error) {
+            console.error(`教室 ${roomid} の混雑状況取得に失敗:`, error);
+            throw error;
+        }
+    }
+
+    /**
+     * 混雑状況を更新
+     * @param {string} roomid 教室ID
+     * @param {number} status 混雑状況（1-5）
+     */
+    async updateCrowdStatus(roomid, status) {
+        // バリデーション
+        if (!Number.isInteger(status) || status < 1 || status > 5) {
+            throw new Error('混雑状況は1-5の整数で指定してください');
+        }
+
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/crowd/${encodeURIComponent(roomid)}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status })
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error(`教室 ${roomid} が見つかりません`);
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+        } catch (error) {
+            console.error(`教室 ${roomid} の混雑状況更新に失敗:`, error);
+            throw error;
+        }
+    }
+
+    /**
+     * キャッシュをクリア
+     */
+    clearCache() {
+        this.#roomsCache = null;
+    }
 }
 
 /** APIクライアントのスタブ */
