@@ -50,8 +50,7 @@ const serveFile = async (filePath, res, origin) => {
             data = data
                 .replace(/\{\{ASS_ORIGIN\}\}/g, origin)
                 .replace(/\{\{SRF_ORIGIN\}\}/g, origin)
-                .replace(/\{\{API_ORIGIN\}\}/g, '')
-                .replace(/\{\{REL_DIR\}\}/g, fileDir);
+                .replace(/\{\{API_ORIGIN\}\}/g, '');
             res.writeHead(200, { 'Content-Type': type });
             res.end(data);
         } catch (err) {
