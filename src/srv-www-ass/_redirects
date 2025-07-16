@@ -1,3 +1,2 @@
-/*.html /:splat      200
-/*.:ext /:splat.:ext 200
-/*      /404         404
+/*.html /:splat 200
+/*      /:splat 200
